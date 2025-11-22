@@ -33,18 +33,18 @@ deploy_production:
       "
 
   script:
-    - echo "Автодеплой bystroi.ru $(date '+%d.%m.%Y %H:%M UTC')"
-    - ssh $DEPLOY_USER@$DEPLOY_HOST "
-        cd /var/www/html &&
-        git config --global --add safe.directory /var/www/html &&
-        
-        GIT_SSH_COMMAND='ssh -i ~/.ssh/gitlab_key -o StrictHostKeyChecking=no' git fetch --all &&
-        GIT_SSH_COMMAND='ssh -i ~/.ssh/gitlab_key -o StrictHostKeyChecking=no' git reset --hard origin/main &&
-        
-        git clean -fd &&
-        sudo chown -R www-data:www-data . &&
-        echo 'Автодеплой завершён успешно!'
-      "
+  - echo "Автодеплой bystroi.ru $(date '+%d.%m.%Y %H:%M UTC')"
+  - ssh $DEPLOY_USER@$DEPLOY_HOST "
+      cd /var/www/html &&
+      git config --global --add safe.directory /var/www/html &&
+      
+      sudo -u deploy git fetch --all &&
+      sudo -u deploy git reset --hard origin/main &&
+      sudo -u deploy git clean -fd &&
+      
+      sudo chown -R www-data:www-data . &&
+      echo 'Автодеплой завершён успешно!'
+    "
       
   environment:
     name: production
