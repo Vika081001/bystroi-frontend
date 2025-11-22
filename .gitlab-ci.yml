@@ -18,12 +18,12 @@ deploy_production:
   script:
   - echo "Деплой bystroi.ru $(date '+%d.%m.%Y %H:%M UTC')"
   - ssh $DEPLOY_USER@$DEPLOY_HOST "
-      git config --global --add safe.directory /var/www/html &&
+      sudo git config --global --add safe.directory /var/www/html &&
       cd /var/www/html &&
-      git fetch --all &&
-      git reset --hard origin/main &&
-      git clean -fd &&
-      chown -R www-data:www-data . &&
+      sudo git fetch --all &&
+      sudo git reset --hard origin/main &&
+      sudo git clean -fd &&
+      sudo chown -R www-data:www-data . &&
       echo 'Деплой завершён успешно!'
     "
   environment:
