@@ -23,16 +23,20 @@ deploy_production:
             git reset --hard origin/main &&
             git clean -fd &&
             chown -R www-data:www-data . &&
-            echo 'Деплой завершён'
+            echo 'Деплой завершён успешно'
             "
     environment:
         name: production
         url: https://bystroi.ru
     rules:
-        - if: '$CI_PIPELINE_SOURCE == "schedule" || $CI_COMMIT_BRANCH == "main"'
-    when: always
-    schedule:
-        cron: "0 3 * * 0"
-        timezone: Etc/UTC
-        ref: main
-        active: true
+        - if: '$CI_PIPELINE_SOURCE == "schedule"'
+        - if: '$CI_COMMIT_BRANCH == "main"'
+
+
+weekly_deploy:
+    output: console
+    cron: "0 3 * * 0"  # Каждое воскресенье в 3:00 ночи
+    cron_timezone: Etc/UTC
+    ref: main
+    description: "Еженедельный автодеплой bystroi.ru"
+    active: true
