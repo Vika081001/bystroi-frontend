@@ -33,18 +33,14 @@ deploy_production:
       "
 
   script:
-  - echo "Автодеплой bystroi.ru $(date '+%d.%m.%Y %H:%M UTC')"
+  - echo "Деплой bystroi.ru $(date '+%d.%m.%Y %H:%M UTC')"
   - ssh $DEPLOY_USER@$DEPLOY_HOST "
-      sudo -u www-data git config --global --add safe.directory /var/www/html &&
-      
       cd /var/www/html &&
-      
+      git config --global --add safe.directory /var/www/html &&
       git fetch --all &&
       git reset --hard origin/main &&
       git clean -fd &&
-      
-      sudo chown -R www-data:www-data . &&
-      echo 'Автодеплой завершён успешно!'
+      echo 'Деплой завершён успешно!'
     "
       
   environment:
