@@ -36,9 +36,10 @@ deploy_production:
   - echo "Деплой bystroi.ru $(date '+%d.%m.%Y %H:%M UTC')"
   - ssh $DEPLOY_USER@$DEPLOY_HOST "
       cd /var/www/html &&
-      git remote set-url origin https://gitlab-ci-token:${CI_JOB_TOKEN}@git.tablecrm.com/group/project.git &&
-      git fetch --all &&
-      git reset --hard origin/main &&
+      git remote set-url origin git@git.tablecrm.com:tablecrm/bystroi.ru.git &&
+      git config --global --add safe.directory /var/www/html &&
+      GIT_SSH_COMMAND='ssh -i ~/.ssh/gitlab_key -o StrictHostKeyChecking=no' git fetch --all &&
+      GIT_SSH_COMMAND='ssh -i ~/.ssh/gitlab_key -o StrictHostKeyChecking=no' git reset --hard origin/main &&
       git clean -fd &&
       echo 'Деплой завершён успешно!'
     "
