@@ -24,7 +24,12 @@ deploy_production:
         echo -e 'Host git.tablecrm.com\n    HostName git.tablecrm.com\n    User git\n    StrictHostKeyChecking no\n    IdentityFile ~/.ssh/gitlab_key' > ~/.ssh/config;
         ssh-keyscan git.tablecrm.com >> ~/.ssh/known_hosts 2>/dev/null;
         chmod 600 ~/.ssh/known_hosts;
-        echo 'SSH настройки завершены'
+        
+        echo '=== ДЕБАГ ИНФО ===';
+        ls -la ~/.ssh/gitlab_key;
+        echo '--- Проверка доступа к GitLab ---';
+        ssh -T git@git.tablecrm.com -v || echo 'Проверка завершена';
+        echo '=== КОНЕЦ ДЕБАГ ===';
       "
 
   script:
@@ -32,8 +37,10 @@ deploy_production:
     - ssh $DEPLOY_USER@$DEPLOY_HOST "
         cd /var/www/html &&
         git config --global --add safe.directory /var/www/html &&
-        git fetch --all &&
-        git reset --hard origin/main &&
+        
+        GIT_SSH_COMMAND='ssh -i ~/.ssh/gitlab_key -o StrictHostKeyChecking=no' git fetch --all &&
+        GIT_SSH_COMMAND='ssh -i ~/.ssh/gitlab_key -o StrictHostKeyChecking=no' git reset --hard origin/main &&
+        
         git clean -fd &&
         sudo chown -R www-data:www-data . &&
         echo 'Автодеплой завершён успешно!'
