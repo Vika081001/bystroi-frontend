@@ -4,3 +4,8 @@ export type ListResponse<T> = {
     page: number;
     size: number;
 }
+
+export interface ListParams {
+    page?: number;
+    size?: number;
+}

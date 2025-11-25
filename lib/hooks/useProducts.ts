@@ -14,13 +14,3 @@ export const useProducts = (params: ProductsParams = { page: 1, size: 20, sort_o
     })
 }
 
-// export const useProduct = (id: string) => {
-//     return useQuery<Product>({
-//         queryKey: ["product", id],
-//         queryFn: async () => {
-//             const response = await apiClient.get(`/products/${id}`)
-//             return response.data
-//         },
-//         enabled: !!id,
-//     })
-// }

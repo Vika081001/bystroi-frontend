@@ -1,24 +1,22 @@
 import { useQuery, useMutation } from "@tanstack/react-query"
 import { apiClient } from "@/lib/api/client"
 
-export const useQrData = (qrCode: string) => {
+export const useResolveQr = (hash: string) => {
     return useQuery({
-        queryKey: ["qr", qrCode],
+        queryKey: ["qr", hash],
         queryFn: async () => {
-            const response = await apiClient.get(`/qr/${qrCode}`)
-            return response.data
-        },
-        enabled: !!qrCode,
-    })
-}
-
-export const useGenerateQr = () => {
-    return useMutation({
-        mutationFn: async (data: { productId: string; quantity?: number }) => {
-            const response = await apiClient.post("/qr/generate", data)
+            const response = await apiClient.get(`/qr/${hash}`)
             return response.data
         },
     })
 }
 
-export const useQr = () => useQrData
+// export const useGenerateQr = () => {
+//     return useMutation({
+//         mutationFn: async (data: { productId: string; quantity?: number }) => {
+//             const response = await apiClient.post("/qr/generate", data)
+//             return response.data
+//         },
+//     })
+// }
+

@@ -1,3 +1,4 @@
+import { ListParams } from "./api";
 import { Warehouse } from "./warehouse";
 
 export type Product = {
@@ -38,12 +39,10 @@ export type Product = {
 export type SortBy = "distance" | "price" | "name" | "rating" | "total_sold" | "created_at" | "updated_at";
 export type SortOrder = "asc" | "desc";
 
-export interface ProductsParams {
+export interface GetProductsParams  extends ListParams {
     phone?: string;
     lat?: number;
     lon?: number;
-    page?: number;
-    size?: number;
     sort_by?: SortBy;
     sort_order?: SortOrder;
     category?: string;
