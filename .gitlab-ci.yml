@@ -6,6 +6,8 @@ variables:
 
 deploy_production:
   stage: deploy
+  image: node:20-alpine
+
   before_script:
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
@@ -33,17 +35,39 @@ deploy_production:
       "
 
   script:
-  - echo "Деплой bystroi.ru $(date '+%d.%m.%Y %H:%M UTC')"
-  - ssh $DEPLOY_USER@$DEPLOY_HOST "
-      cd /var/www/html &&
-      git remote set-url origin git@git.tablecrm.com:tablecrm/bystroi.ru.git &&
-      git config --global --add safe.directory /var/www/html &&
-      GIT_SSH_COMMAND='ssh -i ~/.ssh/gitlab_key -o StrictHostKeyChecking=no' git fetch --all &&
-      GIT_SSH_COMMAND='ssh -i ~/.ssh/gitlab_key -o StrictHostKeyChecking=no' git reset --hard origin/main &&
-      git clean -fd &&
-      echo 'Деплой завершён успешно!'
-    "
-      
+    - echo "Деплой bystroi.ru $(date '+%d.%m.%Y %H:%M UTC')"
+
+    - ssh $DEPLOY_USER@$DEPLOY_HOST "
+        cd /var/www/html &&
+        git remote set-url origin git@git.tablecrm.com:tablecrm/bystroi.ru.git &&
+        git config --global --add safe.directory /var/www/html &&
+        GIT_SSH_COMMAND='ssh -i ~/.ssh/gitlab_key -o StrictHostKeyChecking=no' git fetch --all &&
+        GIT_SSH_COMMAND='ssh -i ~/.ssh/gitlab_key -o StrictHostKeyChecking=no' git reset --hard origin/main &&
+        git clean -fd &&
+        echo 'Исходники обновлены в /var/www/html'
+      "
+
+    - ssh $DEPLOY_USER@$DEPLOY_HOST "
+        set -e
+        cd /var/www/html
+
+        npm install -g pnpm --unsafe-perm=true || true
+        pnpm install --frozen-lockfile || pnpm install
+
+        pnpm build
+
+        sudo rm -rf /var/www/html/*
+        sudo mkdir -p /var/www/html/_next/static
+        sudo cp -r .next/static/* /var/www/html/_next/static/ 2>/dev/null || true
+        sudo find .next -maxdepth 1 -name \"*.html\" -exec cp {} /var/www/html/ \; 2>/dev/null || true
+        [ -d public ] && sudo cp -r public/* /var/www/html/ 2>/dev/null || true
+
+        sudo chown -R www-data:www-data /var/www/html
+        sudo chmod -R 755 /var/www/html
+
+        echo 'Сайт собран и залит как статика — готово!'
+      "
+
   environment:
     name: production
     url: https://bystroi.ru
@@ -53,4 +77,4 @@ deploy_production:
       when: always
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
       when: manual
-      allow_failure: true
+      allow_failure: false        
