@@ -58,14 +58,18 @@ deploy_production:
     - ssh $DEPLOY_USER@$DEPLOY_HOST <<'EOF'
         set -e
         cd $PROJECT_DIR
+
+        rm -rf .next out
+
+        pnpm build
+        npx next export --outdir out
+
         sudo rm -rf $PUBLIC_DIR/*
-        sudo mkdir -p $PUBLIC_DIR/_next/static
-        sudo cp -r .next/static/* $PUBLIC_DIR/_next/static/ 2>/dev/null || true
-        sudo find .next -maxdepth 1 -name '*.html' -exec cp {} $PUBLIC_DIR/ \; 2>/dev/null || true
-        [ -d public ] && sudo cp -r public/* $PUBLIC_DIR/ 2>/dev/null || true
+        sudo cp -r out/* $PUBLIC_DIR/
         sudo chown -R www-data:www-data $PUBLIC_DIR
         sudo chmod -R 755 $PUBLIC_DIR
-        echo "ГОТОВО! Сайт залит → https://bystroi.ru"
+
+        echo "ГОТОВО! Полная чистая статика залита из папки out → https://bystroi.ru"
       EOF
 
   environment:
