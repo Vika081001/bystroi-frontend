@@ -1,4 +1,4 @@
-type Favorite = {
+export type Favorite = {
     id: number;
     nomenclature_id: number;
     contagent_id: number;
