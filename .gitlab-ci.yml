@@ -6,8 +6,10 @@ build_test:
   stage: test
   script:
     - echo "Тестирование"
-    - corepack enable
-    - corepack prepare pnpm@latest --activate
+    - export PNPM_HOME="$HOME/.local/bin"
+    - export PATH="$PNPM_HOME:$PATH"
+    - curl -fsSL https://get.pnpm.io/install.sh | sh -
+    - pnpm --version
     - pnpm install --frozen-lockfile || pnpm install
     - pnpm build
     - echo "Сборка успешна"
