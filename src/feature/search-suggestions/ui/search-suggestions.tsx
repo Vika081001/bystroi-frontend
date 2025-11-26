@@ -1,4 +1,5 @@
 import { Clock8, Flame } from "lucide-react";
+import Link from "next/link";
 import React from "react";
 
 import { Badge } from "@/shared/ui/kit/badge";
@@ -64,42 +65,42 @@ export const SearchSuggestions = () => {
       <div className="p-4">
         <p className="font-medium tracking-tight">Недавно рассмотренные</p>
         <div className="grid grid-cols-6 gap-2 pt-4">
-          <a
+          <Link
             href="/"
             className="rounded-md hover:bg-gray-100 p-2 hover:ring-1 hover:ring-gray-100"
           >
             <img src="/airpods.png" />
-          </a>
-          <a
+          </Link>
+          <Link
             href="/"
             className="rounded-md hover:bg-gray-100 p-2 hover:ring-1 hover:ring-gray-100"
           >
             <img src="/airpods.png" />
-          </a>
-          <a
+          </Link>
+          <Link
             href="/"
             className="rounded-md hover:bg-gray-100 p-2 hover:ring-1 hover:ring-gray-100"
           >
             <img src="/airpods.png" />
-          </a>
-          <a
+          </Link>
+          <Link
             href="/"
             className="rounded-md hover:bg-gray-100 p-2 hover:ring-1 hover:ring-gray-100"
           >
             <img src="/airpods.png" />
-          </a>
-          <a
+          </Link>
+          <Link
             href="/"
             className="rounded-md hover:bg-gray-100 p-2 hover:ring-1 hover:ring-gray-100"
           >
             <img src="/airpods.png" />
-          </a>
-          <a
+          </Link>
+          <Link
             href="/"
             className="rounded-md hover:bg-gray-100 p-2 hover:ring-1 hover:ring-gray-100"
           >
             <img src="/airpods.png" />
-          </a>
+          </Link>
         </div>
       </div>
     </div>

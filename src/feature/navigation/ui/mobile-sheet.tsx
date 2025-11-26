@@ -1,4 +1,5 @@
 import { Grip, Menu } from "lucide-react";
+import Link from "next/link";
 import React from "react";
 
 import { Button } from "@/shared/ui/kit/button";
@@ -37,41 +38,41 @@ export const MobileSheet = () => {
             <Separator />
           </li>
           <li>
-            <a href="/" className="text-lg tracking-tight font-medium">
+            <Link href="/" className="text-lg tracking-tight font-medium">
               Категории
-            </a>
+            </Link>
           </li>
           <li>
             <Separator />
           </li>
           <li>
-            <a href="/" className="text-lg tracking-tight font-medium">
+            <Link href="/" className="text-lg tracking-tight font-medium">
               Контакты
-            </a>
+            </Link>
           </li>
           <li>
             <Separator />
           </li>
           <li>
-            <a href="/" className="text-lg tracking-tight font-medium">
+            <Link href="/" className="text-lg tracking-tight font-medium">
               Популярное
-            </a>
+            </Link>
           </li>
           <li>
             <Separator />
           </li>
           <li>
-            <a href="/" className="text-lg tracking-tight font-medium">
+            <Link href="/" className="text-lg tracking-tight font-medium">
               Недавно просмотренные
-            </a>
+            </Link>
           </li>
           <li>
             <Separator />
           </li>
           <li>
-            <a href="/rating" className="text-lg tracking-tight font-medium">
+            <Link href="/rating" className="text-lg tracking-tight font-medium">
               Рейтинг
-            </a>
+            </Link>
           </li>
         </ul>
         <SheetFooter>

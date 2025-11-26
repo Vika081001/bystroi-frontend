@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 
 const Footer = () => {
@@ -6,12 +7,12 @@ const Footer = () => {
       <div className="container">
         <div className="flex">
           <div className="flex flex-col gap-2">
-            <a
+            <Link
               href="/"
               className="flex gap-2 tracking-tight text-blue-600 text-2xl font-medium"
             >
               название
-            </a>
+            </Link>
             <p className="text-gray-600 text-sm tracking-tight">
               © 2025 Рушан. All rights reserved.
             </p>

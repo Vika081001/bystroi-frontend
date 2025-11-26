@@ -1,4 +1,5 @@
 import { GripIcon } from "lucide-react";
+import Link from "next/link";
 import React from "react";
 
 import { Button } from "@/shared/ui/kit/button";
@@ -33,7 +34,7 @@ export const CategoryMenu = () => {
         <div className="flex">
           <div className="container">
             <div className="grid grid-cols-3 gap-8">
-              <a
+              <Link
                 href="/products"
                 className="relative group flex h-24 items-end p-4 rounded-lg overflow-hidden hover:ring-2 hover:ring-gray-200"
               >
@@ -47,8 +48,8 @@ export const CategoryMenu = () => {
                 <p className="leading-4 pt-3 text-xl font-medium tracking-tight relative text-white">
                   Популярное
                 </p>
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/products"
                 className="relative group flex h-24 items-end p-4 rounded-lg overflow-hidden hover:ring-2 hover:ring-gray-200"
               >
@@ -62,8 +63,8 @@ export const CategoryMenu = () => {
                 <p className="leading-4 pt-3 text-xl font-medium tracking-tight relative text-white">
                   Популярное
                 </p>
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/products"
                 className="relative group flex h-24 items-end p-4 rounded-lg overflow-hidden hover:ring-2 hover:ring-gray-200"
               >
@@ -77,11 +78,11 @@ export const CategoryMenu = () => {
                 <p className="leading-4 pt-3 text-xl font-medium tracking-tight relative text-white">
                   Популярное
                 </p>
-              </a>
+              </Link>
             </div>
             <div className="grid grid-cols-3 gap-8 pt-8">
               <div className="flex gap-4">
-                <a
+                <Link
                   href="/products"
                   className="relative group flex h-56 w-42 items-end p-4 rounded-lg overflow-hidden hover:ring-2 hover:ring-gray-200"
                 >
@@ -95,106 +96,106 @@ export const CategoryMenu = () => {
                   <p className="leading-4 pt-3 text-xl font-medium tracking-tight relative text-white">
                     Популярное
                   </p>
-                </a>
+                </Link>
                 <div className="flex flex-col gap-2">
-                  <a href="/" className="font-medium text-lg tracking-tight">
+                  <Link href="/" className="font-medium text-lg tracking-tight">
                     {categories[0]}
-                  </a>
+                  </Link>
                   <div className="flex flex-col gap-1">
-                    <a
+                    <Link
                       href="/"
                       className="text-sm tracking-tight text-gray-500"
                     >
                       Подкатегория
-                    </a>
-                    <a
+                    </Link>
+                    <Link
                       href="/"
                       className="text-sm tracking-tight text-gray-500"
                     >
                       Подкатегория
-                    </a>
-                    <a
+                    </Link>
+                    <Link
                       href="/"
                       className="text-sm tracking-tight text-gray-500"
                     >
                       Подкатегория
-                    </a>
+                    </Link>
                   </div>
-                  <a href="/" className="font-medium text-lg tracking-tight">
+                  <Link href="/" className="font-medium text-lg tracking-tight">
                     {categories[1]}
-                  </a>
+                  </Link>
                   <div className="flex flex-col gap-1">
-                    <a
+                    <Link
                       href="/"
                       className="text-sm tracking-tight text-gray-500"
                     >
                       Подкатегория
-                    </a>
-                    <a
+                    </Link>
+                    <Link
                       href="/"
                       className="text-sm tracking-tight text-gray-500"
                     >
                       Подкатегория
-                    </a>
-                    <a
+                    </Link>
+                    <Link
                       href="/"
                       className="text-sm tracking-tight text-gray-500"
                     >
                       Подкатегория
-                    </a>
+                    </Link>
                   </div>
                 </div>
                 <div className="flex flex-col gap-2">
-                  <a href="/" className="font-medium text-lg tracking-tight">
+                  <Link href="/" className="font-medium text-lg tracking-tight">
                     {categories[2]}
-                  </a>
+                  </Link>
                   <div className="flex flex-col gap-1">
-                    <a
+                    <Link
                       href="/"
                       className="text-sm tracking-tight text-gray-500"
                     >
                       Подкатегория
-                    </a>
-                    <a
+                    </Link>
+                    <Link
                       href="/"
                       className="text-sm tracking-tight text-gray-500"
                     >
                       Подкатегория
-                    </a>
-                    <a
+                    </Link>
+                    <Link
                       href="/"
                       className="text-sm tracking-tight text-gray-500"
                     >
                       Подкатегория
-                    </a>
+                    </Link>
                   </div>
-                  <a href="/" className="font-medium text-lg tracking-tight">
+                  <Link href="/" className="font-medium text-lg tracking-tight">
                     {categories[3]}
-                  </a>
+                  </Link>
                   <div className="flex flex-col gap-1">
-                    <a
+                    <Link
                       href="/"
                       className="text-sm tracking-tight text-gray-500"
                     >
                       Подкатегория
-                    </a>
-                    <a
+                    </Link>
+                    <Link
                       href="/"
                       className="text-sm tracking-tight text-gray-500"
                     >
                       Подкатегория
-                    </a>
-                    <a
+                    </Link>
+                    <Link
                       href="/"
                       className="text-sm tracking-tight text-gray-500"
                     >
                       Подкатегория
-                    </a>
+                    </Link>
                   </div>
                 </div>
               </div>
               <div className="flex gap-4">
-                <a
+                <Link
                   href="/products"
                   className="relative group flex h-56 w-42 items-end p-4 rounded-lg overflow-hidden hover:ring-2 hover:ring-gray-200"
                 >
@@ -208,106 +209,106 @@ export const CategoryMenu = () => {
                   <p className="leading-4 pt-3 text-xl font-medium tracking-tight relative text-white">
                     Популярное
                   </p>
-                </a>
+                </Link>
                 <div className="flex flex-col gap-2">
-                  <a href="/" className="font-medium text-lg tracking-tight">
+                  <Link href="/" className="font-medium text-lg tracking-tight">
                     {categories[0]}
-                  </a>
+                  </Link>
                   <div className="flex flex-col gap-1">
-                    <a
+                    <Link
                       href="/"
                       className="text-sm tracking-tight text-gray-500"
                     >
                       Подкатегория
-                    </a>
-                    <a
+                    </Link>
+                    <Link
                       href="/"
                       className="text-sm tracking-tight text-gray-500"
                     >
                       Подкатегория
-                    </a>
-                    <a
+                    </Link>
+                    <Link
                       href="/"
                       className="text-sm tracking-tight text-gray-500"
                     >
                       Подкатегория
-                    </a>
+                    </Link>
                   </div>
-                  <a href="/" className="font-medium text-lg tracking-tight">
+                  <Link href="/" className="font-medium text-lg tracking-tight">
                     {categories[1]}
-                  </a>
+                  </Link>
                   <div className="flex flex-col gap-1">
-                    <a
+                    <Link
                       href="/"
                       className="text-sm tracking-tight text-gray-500"
                     >
                       Подкатегория
-                    </a>
-                    <a
+                    </Link>
+                    <Link
                       href="/"
                       className="text-sm tracking-tight text-gray-500"
                     >
                       Подкатегория
-                    </a>
-                    <a
+                    </Link>
+                    <Link
                       href="/"
                       className="text-sm tracking-tight text-gray-500"
                     >
                       Подкатегория
-                    </a>
+                    </Link>
                   </div>
                 </div>
                 <div className="flex flex-col gap-2">
-                  <a href="/" className="font-medium text-lg tracking-tight">
+                  <Link href="/" className="font-medium text-lg tracking-tight">
                     {categories[2]}
-                  </a>
+                  </Link>
                   <div className="flex flex-col gap-1">
-                    <a
+                    <Link
                       href="/"
                       className="text-sm tracking-tight text-gray-500"
                     >
                       Подкатегория
-                    </a>
-                    <a
+                    </Link>
+                    <Link
                       href="/"
                       className="text-sm tracking-tight text-gray-500"
                     >
                       Подкатегория
-                    </a>
-                    <a
+                    </Link>
+                    <Link
                       href="/"
                       className="text-sm tracking-tight text-gray-500"
                     >
                       Подкатегория
-                    </a>
+                    </Link>
                   </div>
-                  <a href="/" className="font-medium text-lg tracking-tight">
+                  <Link href="/" className="font-medium text-lg tracking-tight">
                     {categories[3]}
-                  </a>
+                  </Link>
                   <div className="flex flex-col gap-1">
-                    <a
+                    <Link
                       href="/"
                       className="text-sm tracking-tight text-gray-500"
                     >
                       Подкатегория
-                    </a>
-                    <a
+                    </Link>
+                    <Link
                       href="/"
                       className="text-sm tracking-tight text-gray-500"
                     >
                       Подкатегория
-                    </a>
-                    <a
+                    </Link>
+                    <Link
                       href="/"
                       className="text-sm tracking-tight text-gray-500"
                     >
                       Подкатегория
-                    </a>
+                    </Link>
                   </div>
                 </div>
               </div>
               <div className="flex gap-4">
-                <a
+                <Link
                   href="/products"
                   className="relative group flex h-56 w-42 items-end p-4 rounded-lg overflow-hidden hover:ring-2 hover:ring-gray-200"
                 >
@@ -321,101 +322,101 @@ export const CategoryMenu = () => {
                   <p className="leading-4 pt-3 text-xl font-medium tracking-tight relative text-white">
                     Популярное
                   </p>
-                </a>
+                </Link>
                 <div className="flex flex-col gap-2">
-                  <a href="/" className="font-medium text-lg tracking-tight">
+                  <Link href="/" className="font-medium text-lg tracking-tight">
                     {categories[0]}
-                  </a>
+                  </Link>
                   <div className="flex flex-col gap-1">
-                    <a
+                    <Link
                       href="/"
                       className="text-sm tracking-tight text-gray-500"
                     >
                       Подкатегория
-                    </a>
-                    <a
+                    </Link>
+                    <Link
                       href="/"
                       className="text-sm tracking-tight text-gray-500"
                     >
                       Подкатегория
-                    </a>
-                    <a
+                    </Link>
+                    <Link
                       href="/"
                       className="text-sm tracking-tight text-gray-500"
                     >
                       Подкатегория
-                    </a>
+                    </Link>
                   </div>
-                  <a href="/" className="font-medium text-lg tracking-tight">
+                  <Link href="/" className="font-medium text-lg tracking-tight">
                     {categories[1]}
-                  </a>
+                  </Link>
                   <div className="flex flex-col gap-1">
-                    <a
+                    <Link
                       href="/"
                       className="text-sm tracking-tight text-gray-500"
                     >
                       Подкатегория
-                    </a>
-                    <a
+                    </Link>
+                    <Link
                       href="/"
                       className="text-sm tracking-tight text-gray-500"
                     >
                       Подкатегория
-                    </a>
-                    <a
+                    </Link>
+                    <Link
                       href="/"
                       className="text-sm tracking-tight text-gray-500"
                     >
                       Подкатегория
-                    </a>
+                    </Link>
                   </div>
                 </div>
                 <div className="flex flex-col gap-2">
-                  <a href="/" className="font-medium text-lg tracking-tight">
+                  <Link href="/" className="font-medium text-lg tracking-tight">
                     {categories[2]}
-                  </a>
+                  </Link>
                   <div className="flex flex-col gap-1">
-                    <a
+                    <Link
                       href="/"
                       className="text-sm tracking-tight text-gray-500"
                     >
                       Подкатегория
-                    </a>
-                    <a
+                    </Link>
+                    <Link
                       href="/"
                       className="text-sm tracking-tight text-gray-500"
                     >
                       Подкатегория
-                    </a>
-                    <a
+                    </Link>
+                    <Link
                       href="/"
                       className="text-sm tracking-tight text-gray-500"
                     >
                       Подкатегория
-                    </a>
+                    </Link>
                   </div>
-                  <a href="/" className="font-medium text-lg tracking-tight">
+                  <Link href="/" className="font-medium text-lg tracking-tight">
                     {categories[3]}
-                  </a>
+                  </Link>
                   <div className="flex flex-col gap-1">
-                    <a
+                    <Link
                       href="/"
                       className="text-sm tracking-tight text-gray-500"
                     >
                       Подкатегория
-                    </a>
-                    <a
+                    </Link>
+                    <Link
                       href="/"
                       className="text-sm tracking-tight text-gray-500"
                     >
                       Подкатегория
-                    </a>
-                    <a
+                    </Link>
+                    <Link
                       href="/"
                       className="text-sm tracking-tight text-gray-500"
                     >
                       Подкатегория
-                    </a>
+                    </Link>
                   </div>
                 </div>
               </div>

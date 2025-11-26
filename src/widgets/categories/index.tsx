@@ -1,4 +1,5 @@
 "use cache";
+
 import { ArrowRight } from "lucide-react";
 import React from "react";
 
@@ -15,6 +16,7 @@ const Categories = async () => {
     "linear-gradient(135deg, #fff0f5 0%, #fef6e4 100%)", // молочно-пудровый
     "linear-gradient(135deg, #f8d3ff 0%, #d6e4ff 100%)", // лавандово-голубой
   ];
+
   const categories = [
     "Одежда",
     "Обувь",
@@ -26,6 +28,7 @@ const Categories = async () => {
     "Дом и интерьер",
     "Мебель",
   ];
+
   return (
     <section className="pt-8">
       <div className="container">
@@ -40,8 +43,7 @@ const Categories = async () => {
         </div>
         <div className="pt-4 grid grid-cols-2 gap-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7">
           {Array.from({ length: 7 }, (_, i) => i + 1).map((index) => {
-            const gradient =
-              softGradients[Math.floor(Math.random() * softGradients.length)];
+            const gradient = softGradients[index % softGradients.length];
 
             return (
               <a

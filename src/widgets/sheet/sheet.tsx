@@ -1,4 +1,5 @@
 import { Laptop, Motorbike, PaintRoller } from "lucide-react";
+import Link from "next/link";
 import React from "react";
 
 import { Button } from "@/shared/ui/kit/button";
@@ -28,21 +29,7 @@ export const Sheet = () => {
       </div>
       <ul className="flex flex-col tracking-tight w-full">
         <li className="w-full">
-          <a
-            href="/"
-            className="hover:bg-gray-100 w-full px-4 py-3 flex items-center gap-2"
-          >
-            <Button size="icon-lg">
-              <Laptop width={24} height={24} />
-            </Button>
-            <div className="tracking-tight flex flex-col justify-center">
-              <p className="text-sm font-medium"> Ноутбуки и копьютеры</p>
-              <span className="text-sm text-gray-500">Лучшие предложения</span>
-            </div>
-          </a>
-        </li>
-        <li className="w-full">
-          <a
+          <Link
             href="/"
             className="hover:bg-gray-100 w-full px-4 py-3 flex items-center gap-2"
           >
@@ -53,10 +40,10 @@ export const Sheet = () => {
               <p className="text-sm font-medium">Категория</p>
               <span className="text-sm text-gray-500">Описание категории</span>
             </div>
-          </a>
+          </Link>
         </li>
         <li className="w-full">
-          <a
+          <Link
             href="/"
             className="hover:bg-gray-100 w-full px-4 py-3 flex items-center gap-2"
           >
@@ -67,10 +54,10 @@ export const Sheet = () => {
               <p className="text-sm font-medium">Категория</p>
               <span className="text-sm text-gray-500">Описание категории</span>
             </div>
-          </a>
+          </Link>
         </li>
         <li className="w-full">
-          <a
+          <Link
             href="/"
             className="hover:bg-gray-100 w-full px-4 py-3 flex items-center gap-2"
           >
@@ -81,10 +68,10 @@ export const Sheet = () => {
               <p className="text-sm font-medium">Категория</p>
               <span className="text-sm text-gray-500">Описание категории</span>
             </div>
-          </a>
+          </Link>
         </li>
         <li className="w-full">
-          <a
+          <Link
             href="/"
             className="hover:bg-gray-100 w-full px-4 py-3 flex items-center gap-2"
           >
@@ -95,10 +82,10 @@ export const Sheet = () => {
               <p className="text-sm font-medium">Категория</p>
               <span className="text-sm text-gray-500">Описание категории</span>
             </div>
-          </a>
+          </Link>
         </li>
         <li className="w-full">
-          <a
+          <Link
             href="/"
             className="hover:bg-gray-100 w-full px-4 py-3 flex items-center gap-2"
           >
@@ -109,10 +96,10 @@ export const Sheet = () => {
               <p className="text-sm font-medium">Категория</p>
               <span className="text-sm text-gray-500">Описание категории</span>
             </div>
-          </a>
+          </Link>
         </li>
         <li className="w-full">
-          <a
+          <Link
             href="/"
             className="hover:bg-gray-100 w-full px-4 py-3 flex items-center gap-2"
           >
@@ -123,10 +110,10 @@ export const Sheet = () => {
               <p className="text-sm font-medium">Категория</p>
               <span className="text-sm text-gray-500">Описание категории</span>
             </div>
-          </a>
+          </Link>
         </li>
         <li className="w-full">
-          <a
+          <Link
             href="/"
             className="hover:bg-gray-100 w-full px-4 py-3 flex items-center gap-2"
           >
@@ -137,10 +124,10 @@ export const Sheet = () => {
               <p className="text-sm font-medium">Категория</p>
               <span className="text-sm text-gray-500">Описание категории</span>
             </div>
-          </a>
+          </Link>
         </li>
         <li className="w-full">
-          <a
+          <Link
             href="/"
             className="hover:bg-gray-100 w-full px-4 py-3 flex items-center gap-2"
           >
@@ -151,10 +138,10 @@ export const Sheet = () => {
               <p className="text-sm font-medium">Категория</p>
               <span className="text-sm text-gray-500">Описание категории</span>
             </div>
-          </a>
+          </Link>
         </li>
         <li className="w-full">
-          <a
+          <Link
             href="/"
             className="hover:bg-gray-100 w-full px-4 py-3 flex items-center gap-2"
           >
@@ -165,10 +152,10 @@ export const Sheet = () => {
               <p className="text-sm font-medium">Категория</p>
               <span className="text-sm text-gray-500">Описание категории</span>
             </div>
-          </a>
+          </Link>
         </li>
         <li className="w-full">
-          <a
+          <Link
             href="/"
             className="hover:bg-gray-100 w-full px-4 py-3 flex items-center gap-2"
           >
@@ -179,10 +166,10 @@ export const Sheet = () => {
               <p className="text-sm font-medium">Категория</p>
               <span className="text-sm text-gray-500">Описание категории</span>
             </div>
-          </a>
+          </Link>
         </li>
         <li className="w-full">
-          <a
+          <Link
             href="/"
             className="hover:bg-gray-100 w-full px-4 py-3 flex items-center gap-2"
           >
@@ -193,10 +180,10 @@ export const Sheet = () => {
               <p className="text-sm font-medium">Категория</p>
               <span className="text-sm text-gray-500">Описание категории</span>
             </div>
-          </a>
+          </Link>
         </li>
         <li className="w-full">
-          <a
+          <Link
             href="/"
             className="hover:bg-gray-100 w-full px-4 py-3 flex items-center gap-2"
           >
@@ -207,7 +194,7 @@ export const Sheet = () => {
               <p className="text-sm font-medium">Категория</p>
               <span className="text-sm text-gray-500">Описание категории</span>
             </div>
-          </a>
+          </Link>
         </li>
       </ul>
     </aside>
