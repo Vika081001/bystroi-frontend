@@ -1,60 +1,10 @@
 stages:
-  - build
   - deploy
-
-cache:
-  key: ${CI_COMMIT_REF_SLUG}
-  paths:
-    - .pnpm-store
-    - .next/cache
-
-build:
-  stage: build
-  tags:
-    - universal
-  script:
-    - echo "сборка Next.js"
-    
-    - |
-      if ! command -v pnpm >/dev/null 2>&1; then
-        curl -fsSL https://get.pnpm.io/install.sh | sh -
-        export PNPM_HOME="$HOME/.local/share/pnpm"
-        export PATH="$PNPM_HOME:$PATH"
-      fi
-    
-    - |
-      if pnpm install --frozen-lockfile; then
-        echo "Зависимости установлены"
-      else
-        echo "Lockfile устарел"
-        pnpm install
-      fi
-    
-    - NODE_OPTIONS="--max-old-space-size=3072" pnpm build
-    
-    - |
-      if [ ! -d ".next/standalone" ]; then
-        echo "XXX Ошибка: проверь next.config.ts - нужен output: 'standalone'"
-        exit 1
-      fi
-      
-      echo "Сборка готова"
-  artifacts:
-    paths:
-      - .next/standalone
-      - .next/static
-      - public
-    expire_in: 3 hours
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main"'
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
 
 deploy_production:
   stage: deploy
   tags:
     - universal
-  dependencies:
-    - build
   before_script:
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
@@ -62,37 +12,63 @@ deploy_production:
     - chmod 600 ~/.ssh/deploy_key
     - echo -e "Host $DEPLOY_HOST\n  HostName $DEPLOY_HOST\n  User $DEPLOY_USER\n  StrictHostKeyChecking no\n  IdentityFile ~/.ssh/deploy_key" > ~/.ssh/config
   script:
-    - echo "деплой"
     - |
       ssh $DEPLOY_USER@$DEPLOY_HOST "
         set -e
         
         cd /var/www/bystroi.ru/shopchik-master
+        
         git fetch origin
         git reset --hard origin/main
         git clean -fdx
         
+        echo 'установка pnpm если нет'
+        if ! command -v pnpm >/dev/null 2>&1; then
+          curl -fsSL https://get.pnpm.io/install.sh | sh -
+          export PNPM_HOME=\"\$HOME/.local/share/pnpm\"
+          export PATH=\"\$PNPM_HOME:\$PATH\"
+        fi
+        
+        echo 'установка зависимостей'
+        pnpm install --frozen-lockfile || pnpm install
+        
+        echo 'сборка проекта'
+        NODE_OPTIONS='--max-old-space-size=3072' pnpm build
+        
+        echo 'проверка сборки'
+        if [ ! -d '.next/standalone' ]; then
+          echo 'XXX Ошибка: standalone сборка не создалась'
+          echo 'Проверь next.config.ts - должно быть output: \"standalone\"'
+          exit 1
+        fi
+        
+        echo 'настройка PM2'
         if ! command -v pm2 >/dev/null 2>&1; then
           npm install -g pm2
         fi
         
-        pm2 stop bystroi-app 2>/dev/null || true        
+        echo 'перезапуск'
+        pm2 stop bystroi-app 2>/dev/null || true
         sleep 2
         
         pm2 start .next/standalone/server.js \
           --name bystroi-app \
           --time \
-          --cwd /var/www/bystroi.ru/shopchik-master
+          --cwd /var/www/bystroi.ru/shopchik-master \
+          --log /var/log/bystroi-app.log \
+          --error /var/log/bystroi-app-error.log
         
         pm2 save 2>/dev/null || true
         
-        echo 'ожидание'
+        echo 'проверка'
         sleep 5
         
         if curl -s http://localhost:3000 >/dev/null; then
           echo 'Сайт запущен: https://bystroi.ru'
+          pm2 status bystroi-app
         else
-          echo '!!!  нужно проверить: pm2 logs bystroi-app'
+          echo '!!!  Проверь логи: pm2 logs bystroi-app'
+          pm2 logs bystroi-app --lines 10
         fi
       "
   environment:
