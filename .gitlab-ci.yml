@@ -47,6 +47,10 @@ deploy_production:
           npm install -g pm2
         fi
         
+        echo 'настройка папки для логов'
+        sudo mkdir -p /var/log/bystroi/
+        sudo chown deploy:deploy /var/log/bystroi/
+        
         echo 'перезапуск'
         pm2 stop bystroi-app 2>/dev/null || true
         sleep 2
@@ -55,8 +59,8 @@ deploy_production:
           --name bystroi-app \
           --time \
           --cwd /var/www/bystroi.ru/shopchik-master \
-          --log /var/log/bystroi-app.log \
-          --error /var/log/bystroi-app-error.log
+          --log /var/log/bystroi/app.log \
+          --error /var/log/bystroi/error.log
         
         pm2 save 2>/dev/null || true
         
@@ -67,8 +71,8 @@ deploy_production:
           echo 'Сайт запущен: https://bystroi.ru'
           pm2 status bystroi-app
         else
-          echo '!!!  Проверь логи: pm2 logs bystroi-app'
-          pm2 logs bystroi-app --lines 10
+          echo '!!!  Проверь логи:'
+          tail -20 /var/log/bystroi/error.log 2>/dev/null || echo 'Логи не найдены'
         fi
       "
   environment:
