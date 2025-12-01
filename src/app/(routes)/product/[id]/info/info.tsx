@@ -2,6 +2,7 @@ import { AvatarFallback } from "@radix-ui/react-avatar";
 import { Star } from "lucide-react";
 import React from "react";
 
+import { Product } from "@/entities/product";
 import { ProductImages } from "@/entities/product/ui/product-images";
 
 import { BreadcrumbsDemo } from "@/shared/ui/breadcrumbs";
@@ -9,50 +10,32 @@ import { Avatar, AvatarImage } from "@/shared/ui/kit/avatar";
 import { Badge } from "@/shared/ui/kit/badge";
 import { Button } from "@/shared/ui/kit/button";
 import { Separator } from "@/shared/ui/kit/separator";
+import { Rating } from "@/shared/ui/rating";
 
-const ProductInfo = () => {
+type Props = Product;
+
+const ProductInfo = ({
+  name,
+  seller_name,
+  seller_photo,
+  rating,
+  reviews_count,
+  ...product
+}: Props) => {
   return (
     <section>
       <BreadcrumbsDemo />
       <div className="flex gap-8 flex-col lg:flex-row">
-        <ProductImages />
+        <ProductImages {...product} />
         <div className="flex-1">
-          <h1 className="text-xl font-medium tracking-tight">
-            Apple AirPods Pro (наушнички)
-          </h1>
+          <h1 className="text-xl font-medium tracking-tight">{name}</h1>
           <div className="flex pt-2 items-center gap-2">
             <div className="flex items-center gap-0.5">
-              <Star
-                width={16}
-                height={16}
-                strokeWidth={1}
-                fill="gold"
-                stroke="gold"
-              />
-              <Star
-                width={16}
-                height={16}
-                strokeWidth={1}
-                fill="gold"
-                stroke="gold"
-              />
-              <Star
-                width={16}
-                height={16}
-                strokeWidth={1}
-                fill="gold"
-                stroke="gold"
-              />
-              <Star
-                width={16}
-                height={16}
-                strokeWidth={1}
-                fill="gold"
-                stroke="gold"
-              />
-              <Star width={16} height={16} strokeWidth={1} stroke="gold" />
+              <Rating size={16} rating={rating ?? 0} />
             </div>
-            <span className="text-xs text-gray-600">203 отзыва</span>
+            <span className="text-xs text-gray-600">
+              {reviews_count ?? 0} отзыва
+            </span>
           </div>
           <Separator className="w-full my-4" />
           <div className="flex flex-col gap-3">
@@ -103,41 +86,17 @@ const ProductInfo = () => {
           <p className="text-sm text-gray-500">Продавец</p>
           <div className="flex items-center gap-2 pt-2">
             <Avatar className="size-10">
-              <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+              <AvatarImage
+                src={seller_photo ?? "https://github.com/shadcn.png"}
+                alt={seller_name}
+              />
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
             <div>
-              <p className="text-sm font-medium">Ozon</p>
+              <p className="text-sm font-medium">{seller_name}</p>
               <div className="flex items-center gap-0.5">
-                <Star
-                  width={12}
-                  height={12}
-                  strokeWidth={1}
-                  fill="gold"
-                  stroke="gold"
-                />
-                <Star
-                  width={12}
-                  height={12}
-                  strokeWidth={1}
-                  fill="gold"
-                  stroke="gold"
-                />
-                <Star
-                  width={12}
-                  height={12}
-                  strokeWidth={1}
-                  fill="gold"
-                  stroke="gold"
-                />
-                <Star
-                  width={12}
-                  height={12}
-                  strokeWidth={1}
-                  fill="gold"
-                  stroke="gold"
-                />
-                <Star width={12} height={12} strokeWidth={1} stroke="gold" />
+                {/* TODO: рейтинг продавца */}
+                <Rating size={12} rating={rating ?? 0} />
               </div>
             </div>
           </div>

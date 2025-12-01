@@ -1,14 +1,13 @@
 import { ShoppingCart } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 
-import { Product } from "@/shared/types";
 import { Button } from "@/shared/ui/kit/button";
 
-type ProductCardProps = Pick<
-  Product,
-  "id" | "name" | "price" | "category_name" | "images"
->;
+import { Product } from "../model";
+
+type ProductCardProps = Product;
 
 export const ProductCard = ({
   id,
@@ -16,10 +15,11 @@ export const ProductCard = ({
   price,
   category_name,
   images,
+  ...product
 }: ProductCardProps) => {
   return (
-    <a
-      href="/product"
+    <Link
+      href={`/product/${id}`}
       className="relative overflow-hidden h-72 rounded-lg border border-gray-100 shadow-sm hover:ring-2 ring-gray-200 flex items-end"
     >
       <div className="absolute inset-0">
@@ -47,6 +47,6 @@ export const ProductCard = ({
           <ShoppingCart width={16} height={16} />В корзину
         </Button>
       </div>
-    </a>
+    </Link>
   );
 };

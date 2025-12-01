@@ -5,7 +5,7 @@ export type ListResponse<T> = {
   size: number;
 };
 
-export interface ListParams {
-  page?: number;
-  size?: number;
-}
+export type ListParams = {
+  page: number | 1;
+  size: number | 20;
+};

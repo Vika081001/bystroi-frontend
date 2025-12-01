@@ -3,7 +3,6 @@ export * from "./favorite";
 export * from "./cart";
 export * from "./event";
 export * from "./location";
-export * from "./product";
 export * from "./review";
 export * from "./user";
 export * from "./warehouse";
