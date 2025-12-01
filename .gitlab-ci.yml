@@ -59,21 +59,13 @@ deploy_production:
       ssh $DEPLOY_USER@$DEPLOY_HOST /bin/bash << 'EOF'
       set -e
       cd /var/www/bystroi.ru/shopchik-master
-      
       git fetch origin && git reset --hard origin/main && git clean -fdx
-      
-      export PNPM_HOME="\$HOME/.local/share/pnpm"
-      export PATH="\$PNPM_HOME:\$PATH"
-      command -v pnpm >/dev/null 2>&1 || curl -fsSL https://get.pnpm.io/install.sh | bash -
-      
       pnpm install --frozen-lockfile || pnpm install
       NODE_OPTIONS="--max-old-space-size=3072" pnpm build
       
+      echo "Деплой"
       sudo rm -rf /var/www/html/*
-      sudo mkdir -p /var/www/html/_next/static
-      sudo cp -r out/* /var/www/html/ 2>/dev/null || true
-      sudo cp -r public/* /var/www/html/ 2>/dev/null || true
-      
+      sudo cp -r out/* /var/www/html/
       sudo chown -R www-data:www-data /var/www/html
       sudo find /var/www/html -type d -exec chmod 755 {} \;
       sudo find /var/www/html -type f -exec chmod 644 {} \;
