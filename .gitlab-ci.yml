@@ -94,8 +94,9 @@ deploy_production:
       sudo chown -R www-data:www-data /var/www/html
       sudo find /var/www/html -type d -exec chmod 755 {} \;
       sudo find /var/www/html -type f -exec chmod 644 {} \;
-
-      echo "Деплой завершён успешно! Сайт живой: https://bystroi.ru"
+      sudo sed -i 's|__NEXT_DATA__|window.__NEXT_DATA__={props:{},page:"/",query:{},buildId:"'|g' /var/www/html/_next/static/chunks/main-app.js 2>/dev/null || true
+      sudo sed -i 's|window\.__next_f=\[\]|window.__next_f=[]|g' /var/www/html/_next/static/*/main-app*.js 2>/dev/null || true
+      echo "Деплой завершён: https://bystroi.ru"
       EOF
   environment:
     name: production
