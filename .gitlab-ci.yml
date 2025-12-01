@@ -39,31 +39,52 @@ build:
   artifacts:
     paths:
       - .next
-      - out
+      - public
+      - next-env.d.ts
     expire_in: 2 hours
 
 deploy_production:
   stage: deploy
   tags:
     - universal
+  before_script:
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$DEPLOY_SERVER_PRIVATE_KEY" > ~/.ssh/deploy_key
+    - chmod 600 ~/.ssh/deploy_key
+    - echo -e "Host $DEPLOY_HOST\n    HostName $DEPLOY_HOST\n    User $DEPLOY_USER\n    StrictHostKeyChecking no\n    IdentityFile ~/.ssh/deploy_key" > ~/.ssh/config
   script:
     - echo "Деплой bystroi.ru $(date '+%d.%m.%Y %H:%M UTC')"
     - |
       ssh $DEPLOY_USER@$DEPLOY_HOST bash <<'EOF'
       set -e
       cd /var/www/bystroi.ru/shopchik-master
+
       git fetch origin && git reset --hard origin/main && git clean -fdx
+
       export PNPM_HOME="$HOME/.local/share/pnpm"
       export PATH="$PNPM_HOME:$PATH"
-      if ! command -v pnpm >/dev/null; then
+      if ! command -v pnpm >/dev/null 2>&1; then
         curl -fsSL https://get.pnpm.io/install.sh | bash -
       fi
+
       pnpm install --frozen-lockfile || pnpm install
       NODE_OPTIONS="--max-old-space-size=3072" pnpm build
-      sudo rsync -av --delete out/ /var/www/html/
+
+      sudo rm -rf /var/www/html/*
+
+      sudo mkdir -p /var/www/html/_next/static
+      sudo cp -r .next/static/* /var/www/html/_next/static/ 2>/dev/null || true
+
+      sudo cp -r public/* /var/www/html/ 2>/dev/null || true
+
+      sudo find .next/server/app -name "*.html" -exec cp --parents {} /var/www/html/ \; 2>/dev/null || true
+      sudo cp -r .next/server/app /var/www/html/_next/server/app 2>/dev/null || true
+
       sudo chown -R www-data:www-data /var/www/html
       sudo chmod -R 755 /var/www/html
-      echo "Деплой завершённых успешно!"
+
+      echo "Деплой завершён успешно!"
       EOF
   environment:
     name: production
