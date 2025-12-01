@@ -1,5 +1,9 @@
+"use client";
+
 import { Heart, Minus, Plus, Share2 } from "lucide-react";
 import React from "react";
+
+import { Product } from "@/entities/product";
 
 import { Button } from "@/shared/ui/kit/button";
 import {
@@ -9,7 +13,9 @@ import {
 } from "@/shared/ui/kit/input-group";
 import { Separator } from "@/shared/ui/kit/separator";
 
-const ProductOrder = () => {
+type Props = Product;
+
+export const AddToCart = ({ price, ...product }: Product) => {
   return (
     <div className="xl:max-w-[280px] mx-auto max-w-lg w-full border border-gray-200 rounded-lg p-4 h-fit md:mt-12">
       <p className="font-medium tracking-tight">Оформить заказ</p>
@@ -36,7 +42,7 @@ const ProductOrder = () => {
       <Separator className="my-4" />
       <div className="flex items-center justify-between">
         <p className="text-sm text-gray-500">Всего:</p>
-        <span className="text-lg font-medium">13.000 $</span>
+        <span className="text-lg font-medium">${price}</span>
       </div>
       <div className="pt-4 flex flex-col gap-2">
         <Button className="bg-blue-500 text-white w-full">
@@ -58,5 +64,3 @@ const ProductOrder = () => {
     </div>
   );
 };
-
-export default ProductOrder;

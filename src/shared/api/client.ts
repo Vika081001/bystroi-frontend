@@ -13,9 +13,11 @@ export const configureAuth = (getter: () => string | null) => {
   getAuthPhone = getter;
 };
 
+export const baseURL =
+  process.env.NEXT_PUBLIC_API_URL || "https://app.tablecrm.com/api/v1/mp";
+
 export const apiClient = axios.create({
-  baseURL:
-    process.env.NEXT_PUBLIC_API_URL || "https://app.tablecrm.com/api/v1/mp",
+  baseURL,
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",

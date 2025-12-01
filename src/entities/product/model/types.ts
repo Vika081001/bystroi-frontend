@@ -1,5 +1,4 @@
-import { ListParams } from "./api";
-import { Warehouse } from "./warehouse";
+import { ListParams, Warehouse } from "@/shared/types";
 
 export type Product = {
   id: number;
@@ -46,7 +45,7 @@ export type SortBy =
   | "updated_at";
 export type SortOrder = "asc" | "desc";
 
-export interface GetProductsParams extends ListParams {
+export interface GetProductsDto extends ListParams {
   phone?: string;
   lat?: number;
   lon?: number;
@@ -59,4 +58,8 @@ export interface GetProductsParams extends ListParams {
   in_stock?: boolean;
   rating_from?: number;
   rating_to?: number;
+}
+
+export interface GetProductDto {
+  product_id: string;
 }
