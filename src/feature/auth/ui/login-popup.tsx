@@ -39,7 +39,7 @@ export const LoginPopup: React.FC<{ trigger: React.ReactNode }> = ({ trigger }) 
   const [showPhoneSuggestion, setShowPhoneSuggestion] = useState(false);
   const [useDefaultPhone, setUseDefaultPhone] = useState(false);
   
-  const defaultPhone = "+7999507986";
+  const defaultPhone = "+79995079869";
 
   const handleLogin = () => {
     const phoneToUse = phone || (useDefaultPhone ? defaultPhone : "");

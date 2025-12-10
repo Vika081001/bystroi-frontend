@@ -70,8 +70,12 @@ export const FavoriteButton = ({
     <button
       onClick={handleToggleFavorite}
       disabled={isLoading}
-      className={cn(
+      className={!showText ? cn(
         "relative rounded-full flex items-center justify-center transition-all duration-300 hover:scale-105 cursor-pointer",
+        sizeClasses[size],
+        className
+      ) : cn(
+        "relative rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer",
         sizeClasses[size],
         className
       )}
@@ -100,7 +104,7 @@ export const FavoriteButton = ({
       />
 
       {showText && (
-        <span className="text-sm text-gray-600 cursor-pointer hover:text-blue-500 absolute left-5 top-1.5 w-26">В избранное</span>
+        <span className="text-sm text-gray-600 cursor-pointer hover:text-blue-500 hover:scale-100 absolute left-5 top-1.5 w-26">В избранное</span>
       )}
 
       {isAnimating && (

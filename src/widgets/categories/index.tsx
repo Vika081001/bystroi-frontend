@@ -25,13 +25,13 @@ const Categories = () => {
   ];
 
   const fallbackImages = [
-    "buisnes.jpg",
-    "domdacha.jpg", 
-    "animals.jpg",
-    "acses.jpg",
-    "items.jpg",
-    "house.jpg",
-    "work.jpg"
+    "https://i.pinimg.com/736x/cf/32/34/cf32346127928acec861592141cbb0ef.jpg",
+    "https://avatars.mds.yandex.net/i?id=b0c69c07ec10d5b2e758cb289fe0a2c71b18b18a-4578426-images-thumbs&n=13", 
+    "https://avatars.mds.yandex.net/i?id=bc28e7a0d38060f895eebdb9f18387de13ee7e43-10814916-images-thumbs&n=13",
+    "https://avatars.mds.yandex.net/i?id=66af7a8ee56f17385f927f319e8fd3152e75231a-12345336-images-thumbs&n=13",
+    "https://avatars.mds.yandex.net/i?id=23c2d2ec9b5abecd729ece4703056e1d9fa93401-2958044-images-thumbs&n=13",
+    "https://avatars.mds.yandex.net/i?id=79f0a42787de8f2a35dd9271e0d9e3e912007e6f-5216821-images-thumbs&n=13",
+    "https://avatars.mds.yandex.net/i?id=b3211000e686c0146300b4b8e95ff4f9888977ca-10639540-images-thumbs&n=13"
   ];
 
   if (isLoading) {
@@ -87,7 +87,7 @@ const Categories = () => {
                   {category.image_url ? (
                     <img
                       src={transformImageUrl(category.image_url)}
-                      className="w-full object-cover"
+                      className="w-full object-fill"
                       alt={category.name}
                       onError={(e) => {
                         (e.target as HTMLImageElement).src = "/airpods.png";

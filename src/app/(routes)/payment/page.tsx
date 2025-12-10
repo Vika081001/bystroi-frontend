@@ -1,5 +1,5 @@
 "use client";
-import { LockIcon } from "lucide-react";
+import { LockIcon, X, CheckCircle, AlertCircle, LocateIcon } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
@@ -20,6 +20,33 @@ interface UserData {
   name: string;
   phone: string;
   address?: string;
+}
+
+const DEFAULT_COORDINATES = {
+  lat: 55.7558,
+  lon: 37.6173,
+};
+
+interface OrderModalData {
+  isOpen: boolean;
+  isSuccess: boolean;
+  title: string;
+  message: string;
+  orderDetails?: {
+    userData: {
+      name: string;
+      phone: string;
+      address: string;
+      coordinates?: string;
+    };
+    items: Array<{
+      name: string;
+      quantity: number;
+      price: number;
+    }>;
+    totalPrice: number;
+  };
+  error?: string;
 }
 
 const PaymentPage = () => {
@@ -44,29 +71,115 @@ const PaymentPage = () => {
     recipientPhone: "",
   });
 
-  const [orderPlaced, setOrderPlaced] = useState(false);
+  const [coordinates, setCoordinates] = useState<{ lat: number; lon: number } | null>(null);
+  const [isGeolocationLoading, setIsGeolocationLoading] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [orderModal, setOrderModal] = useState<OrderModalData>({
+    isOpen: false,
+    isSuccess: false,
+    title: "",
+    message: "",
+  });
+
+  const getAddressFromCoordinates = async (lat: number, lon: number): Promise<string> => {
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`,
+        {
+          headers: {
+            'Accept-Language': 'ru-RU',
+          },
+        }
+      );
+      
+      if (!response.ok) {
+        throw new Error('Ошибка при получении адреса');
+      }
+      
+      const data = await response.json();
+      
+      if (data.address) {
+        const addressComponents = [];
+        
+        if (data.address.road) addressComponents.push(`ул. ${data.address.road}`);
+        if (data.address.house_number) addressComponents.push(`д. ${data.address.house_number}`);
+        if (data.address.city) addressComponents.push(data.address.city);
+        if (data.address.country) addressComponents.push(data.address.country);
+        
+        return addressComponents.join(', ') || 'Адрес не найден';
+      }
+      
+      return 'Адрес не найден';
+    } catch (error) {
+      console.error('Ошибка при получении адреса:', error);
+      return 'Не удалось определить адрес';
+    }
+  };
+
+  const handleGeolocationClick = async () => {
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const coords = {
+          lat: position.coords.latitude,
+          lon: position.coords.longitude,
+        };
+        
+        setCoordinates(coords);
+        
+        try {
+          const address = await getAddressFromCoordinates(coords.lat, coords.lon);
+          
+          setFormData(prev => ({
+            ...prev,
+            address: address,
+          })); 
+        } catch (error) {
+          console.error("Ошибка при получении адреса:", error);
+        }
+      },
+      (error) => {
+        console.error("Ошибка геолокации:", error);
+        setIsGeolocationLoading(false);
+        
+        let errorMessage = "Не удалось получить местоположение";
+        switch(error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage = "Доступ к геолокации запрещен. Разрешите доступ в настройках браузера";
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorMessage = "Информация о местоположении недоступна";
+            break;
+          case error.TIMEOUT:
+            errorMessage = "Время запроса геолокации истекло";
+            break;
+        }
+        
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+      }
+    );
+  };
 
   useEffect(() => {
     const loadUserData = async () => {
       try {
         let userData: UserData | null = null;
-        let source: 'auth' | 'localStorage' | 'contragent' | null = null;
 
-        if (!userData) {
-          const savedData = localStorage.getItem('user_delivery_data');
-          if (savedData) {
-            try {
-              const parsedData = JSON.parse(savedData);
-              userData = {
-                name: parsedData.name || "",
-                phone: parsedData.phone || "",
-                address: parsedData.address || "",
-              };
-              source = 'localStorage';
-            } catch (error) {
-              console.error('Error parsing localStorage data:', error);
-            }
+        const savedData = localStorage.getItem('user_delivery_data');
+        if (savedData) {
+          try {
+            const parsedData = JSON.parse(savedData);
+            userData = {
+              name: parsedData.name || "",
+              phone: parsedData.phone || "",
+              address: parsedData.address || "",
+            };
+          } catch (error) {
+            console.error('Error parsing localStorage data:', error);
           }
         }
 
@@ -76,8 +189,6 @@ const PaymentPage = () => {
             phone: contragentPhone,
             address: "",
           };
-          source = 'contragent';
-
         }
 
         if (!userData) {
@@ -86,15 +197,14 @@ const PaymentPage = () => {
             phone: "",
             address: "",
           };
-
         }
+        
         setFormData(prev => ({
           ...prev,
           name: userData!.name,
           phone: userData!.phone,
           address: userData!.address || "",
         }));
-
         
       } catch (error) {
         console.error('Error loading user data:', error);
@@ -141,17 +251,44 @@ const PaymentPage = () => {
     setFormData(prev => ({ ...prev, [id]: value }));
   };
 
+  const closeModal = () => {
+    setOrderModal(prev => ({ ...prev, isOpen: false }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!cart || items.length === 0) {
-      alert("Корзина пуста");
+      setOrderModal({
+        isOpen: true,
+        isSuccess: false,
+        title: "Ошибка оформления",
+        message: "Не удалось оформить заказ",
+        error: "Корзина пуста",
+      });
       return;
     }
 
     if (!formData.name || !formData.phone) {
-      alert("Заполните обязательные поля: имя и телефон");
+      setOrderModal({
+        isOpen: true,
+        isSuccess: false,
+        title: "Ошибка оформления",
+        message: "Не удалось оформить заказ",
+        error: "Заполните обязательные поля: имя и телефон",
+      });
       return;
+    }
+
+    let finalLat: number | undefined;
+    let finalLon: number | undefined;
+
+    if (coordinates) {
+      finalLat = coordinates.lat;
+      finalLon = coordinates.lon;
+    } else {
+      finalLat = DEFAULT_COORDINATES.lat;
+      finalLon = DEFAULT_COORDINATES.lon;
     }
 
     const orderData = {
@@ -171,35 +308,202 @@ const PaymentPage = () => {
           phone: formData.isAnotherPerson ? formData.recipientPhone : formData.phone,
         },
         note: formData.note,
-      }
+      },
+      contragent_phone: contragentPhone || formData.phone,
+      client_lat: finalLat,
+      client_lon: finalLon,
+      additional_data: [{
+        geolocation_source: coordinates ? "browser" : "default",
+        geolocation_timestamp: new Date().toISOString(),
+      }],
     };
 
     try {
       await createOrderMutation.mutateAsync(orderData);
-      setOrderPlaced(true);
       
-      setTimeout(() => {
-        router.push("/order-success");
-      }, 2000);
+      let streetAddress = "Не удалось определить адрес";
+      if (finalLat && finalLon) {
+        try {
+          streetAddress = await getAddressFromCoordinates(finalLat, finalLon);
+        } catch (error) {
+          console.error("Ошибка при получении адреса:", error);
+          streetAddress = formData.address || "Адрес не указан";
+        }
+      } else {
+        streetAddress = formData.address || "Адрес не указан";
+      }
+
+      setOrderModal({
+        isOpen: true,
+        isSuccess: true,
+        title: "Заказ успешно оформлен!",
+        message: "Спасибо за ваш заказ.",
+        orderDetails: {
+          userData: {
+            name: formData.isAnotherPerson ? formData.recipientName : formData.name,
+            phone: formData.isAnotherPerson ? formData.recipientPhone : formData.phone,
+            address: streetAddress,
+            coordinates: finalLat && finalLon 
+              ? `Широта: ${finalLat.toFixed(6)}, Долгота: ${finalLon.toFixed(6)}` 
+              : undefined,
+          },
+          items: items.map(item => ({
+            name: item.product?.name || `Товар #${item.nomenclature_id}`,
+            quantity: item.quantity || 1,
+            price: item.product?.price || 0,
+          })),
+          totalPrice,
+        },
+      });
+      
     } catch (error) {
       console.error("Ошибка при оформлении заказа:", error);
-      alert("Произошла ошибка при оформлении заказа. Попробуйте еще раз.");
+      setOrderModal({
+        isOpen: true,
+        isSuccess: false,
+        title: "Ошибка оформления",
+        message: "Произошла ошибка при оформлении заказа",
+        error: error instanceof Error ? error.message : "Неизвестная ошибка",
+      });
     }
   };
-
-  if (orderPlaced) {
-    return (
-      <div className="container mx-auto py-8 text-center">
-        <h1 className="text-2xl font-bold text-green-600 mb-4">Заказ успешно оформлен!</h1>
-        <p>Спасибо за ваш заказ. Скоро с вами свяжется менеджер.</p>
-      </div>
-    );
-  }
 
   const isLoading = isCartLoading || areItemsLoading || createOrderMutation.isPending;
 
   return (
     <div className="py-4 md:py-8 min-w-200">
+      {/* Модальное окно */}
+      {orderModal.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="relative w-full max-w-lg rounded-lg bg-white shadow-lg">
+            {/* Заголовок */}
+            <div className={`p-6 ${orderModal.isSuccess ? 'bg-green-50' : 'bg-red-50'} rounded-t-lg`}>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  {orderModal.isSuccess ? (
+                    <CheckCircle className="h-8 w-8 text-green-600" />
+                  ) : (
+                    <AlertCircle className="h-8 w-8 text-red-600" />
+                  )}
+                  <h2 className="text-xl font-semibold text-gray-900">
+                    {orderModal.title}
+                  </h2>
+                </div>
+                <button
+                  onClick={closeModal}
+                  className="rounded-full p-1 hover:bg-gray-100"
+                >
+                  <X className="h-5 w-5 text-gray-500" />
+                </button>
+              </div>
+              <p className="mt-2 text-gray-600">
+                {orderModal.message}
+              </p>
+            </div>
+            <div className="p-6">
+              {orderModal.isSuccess && orderModal.orderDetails ? (
+                <>
+                  <div className="mb-6">
+                    <h3 className="mb-3 text-lg font-medium text-gray-900">
+                      Данные покупателя
+                    </h3>
+                    <div className="space-y-2 rounded-lg border border-gray-200 p-4">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Имя:</span>
+                        <span className="font-medium">{orderModal.orderDetails.userData.name}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Телефон:</span>
+                        <span className="font-medium">{orderModal.orderDetails.userData.phone}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Адрес доставки:</span>
+                        <span className="font-medium text-right">{orderModal.orderDetails.userData.address}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mb-6">
+                    <h3 className="mb-3 text-lg font-medium text-gray-900">
+                      Состав заказа
+                    </h3>
+                    <div className="space-y-3">
+                      {orderModal.orderDetails.items.map((item, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center justify-between rounded-lg border border-gray-200 p-3"
+                        >
+                          <div className="flex-1">
+                            <h4 className="font-medium">{item.name}</h4>
+                          </div>
+                          <div className="flex items-center gap-6">
+                            <div className="text-right">
+                              <div className="text-gray-600">Количество</div>
+                              <div className="font-medium">{item.quantity} шт.</div>
+                            </div>
+                            <div className="text-right">
+                              <div className="text-gray-600">Стоимость</div>
+                              <div className="font-medium">{item.price.toLocaleString("ru-RU")} ₽</div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="rounded-lg bg-gray-50 p-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-lg font-medium text-gray-900">Итого:</span>
+                      <span className="text-2xl font-bold text-blue-600">
+                        {orderModal.orderDetails.totalPrice.toLocaleString("ru-RU")} ₽
+                      </span>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="text-center py-8">
+                  <AlertCircle className="mx-auto h-16 w-16 text-red-500 mb-4" />
+                  <h3 className="mb-2 text-lg font-medium text-gray-900">
+                    {orderModal.error || "Произошла ошибка"}
+                  </h3>
+                  <p className="text-gray-600 mb-6">
+                    Пожалуйста, попробуйте еще раз или обратитесь в поддержку.
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <div className="border-t border-gray-200 p-6">
+              <div className="flex gap-3">
+                {orderModal.isSuccess ? (
+                  <>
+                    <Button
+                      onClick={closeModal}
+                      variant="outline"
+                      className="flex-1 cursor-pointer"
+                    >
+                      Закрыть
+                    </Button>
+                    <Button
+                      className="flex-1 bg-blue-600 hover:bg-blue-700 cursor-pointer"
+                    >
+                      Перейти к заказам
+                    </Button>
+                  </>
+                ) : (
+                  <Button
+                    onClick={closeModal}
+                    className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer"
+                  >
+                    Попробовать снова
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="container">
         <div className="w-full max-w-5xl mx-auto">
           <h1 className="text-xl font-medium tracking-tight pb-4">Оформление заказа</h1>
@@ -245,15 +549,36 @@ const PaymentPage = () => {
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="address">Адрес доставки</Label>
-                  <Input
-                    id="address"
-                    type="text"
-                    placeholder="ул. Пушкина, д. Колотушкина (не обязательно)"
-                    value={formData.address}
-                    onChange={handleInputChange}
-                    disabled={isLoading}
-                  />
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="address">Адрес доставки</Label>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleGeolocationClick}
+                        disabled={isGeolocationLoading || isLoading}
+                        className="h-8 w-8 p-0 relative top-10 z-10 cursor-pointer"
+                        title="Определить мое местоположение"
+                      >
+                        <LocateIcon className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="relative">
+                    <Input
+                      id="address"
+                      type="text"
+                      placeholder="ул. Пушкина, д. Колотушкина (не обязательно)"
+                      value={formData.address}
+                      onChange={handleInputChange}
+                      disabled={isLoading}
+                      className="pr-10"
+                    />
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Нажмите на иконку локации для автоматического определения адреса
+                  </p>
                 </div>
                 <div className="flex flex-col gap-1.5">
                   <Label htmlFor="note">Примечание к заказу</Label>
@@ -269,6 +594,7 @@ const PaymentPage = () => {
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id="isAnotherPerson"
+                    className="cursor-pointer"
                     checked={formData.isAnotherPerson}
                     onCheckedChange={(checked) => {
                       setFormData(prev => ({ ...prev, isAnotherPerson: !!checked }));
@@ -309,12 +635,12 @@ const PaymentPage = () => {
                 )}
                 <Button 
                   type="submit" 
-                  className="bg-blue-600 hover:bg-blue-700" 
+                  className="bg-blue-600 hover:bg-blue-700 cursor-pointer" 
                   disabled={isLoading || items.length === 0}
                 >
                   {createOrderMutation.isPending ? (
                     <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2 " />
                       Оформление заказа...
                     </>
                   ) : (

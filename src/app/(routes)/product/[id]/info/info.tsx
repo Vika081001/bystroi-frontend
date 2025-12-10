@@ -123,12 +123,12 @@ const ProductInfo = ({
                 {nomenclatures.map((group: any, index: number) => (
                   <div key={index}>
                     <h4 className="text-sm mb-2 text-gray-500">{group.group_name}: <span className="text-black">{name}</span></h4>
-                    <div className="flex mt-2 h-7 gap-2"> 
+                    <div className="mt-2 pb-1"> 
                       {group.items.map((item: any) => (
                         <Link
                           key={item.id}
                           href={`/product/${item.id}`}
-                          className="cursor-pointer"
+                          className="cursor-pointer mr-1 mb-1 mt-1"
                         >
                           <Badge
                             variant="outline"
@@ -248,10 +248,10 @@ const ProductInfo = ({
                           <div key={warehouse.warehouse_id} className="border rounded-lg p-3">
                             <p className="font-medium">{warehouse.warehouse_name}</p>
                             <p className="text-sm text-gray-600">{warehouse.warehouse_address}</p>
-                            <div className="flex justify-between items-center mt-2">
+                            <div className="flex items-center mt-2">
                               <span className="text-sm">В наличии:</span>
-                              <span className="font-medium">
-                                {warehouse.current_amount} {unit_name}
+                              <span className="font-medium ml-1">
+                                {warehouse.current_amount}
                               </span>
                             </div>
                           </div>

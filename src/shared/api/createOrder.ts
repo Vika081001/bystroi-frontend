@@ -17,7 +17,7 @@ export const createOrder = async (params: CreateOrderParams): Promise<CreateOrde
     ...body
   } = params;
 
-  const response = await apiClient.post<CreateOrderResponse>("/mp/orders", body, {
+  const response = await apiClient.post<CreateOrderResponse>("/orders", body, {
     params: {
       entity_type,
       utm_source,
