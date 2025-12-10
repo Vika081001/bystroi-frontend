@@ -16,7 +16,7 @@ interface ProductsListProps {
 
 const ProductsList: React.FC<ProductsListProps> = ({ 
   params, 
-  onTotalCountChange 
+  onTotalCountChange
 }) => {
   const {
     data,
@@ -72,7 +72,7 @@ const ProductsList: React.FC<ProductsListProps> = ({
 
   if (error) {
     return (
-      <div className="text-center py-8">
+      <div className="flex-1 text-center py-8">
         <div className="text-red-600 mb-2">Ошибка загрузки продуктов</div>
         <button 
           onClick={() => window?.location.reload()}
@@ -88,7 +88,7 @@ const ProductsList: React.FC<ProductsListProps> = ({
 
   if (totalCount === 0) {
     return (
-      <div className="text-center py-12 w-full aligin-content-center">
+      <div className="flex-1 text-center py-12">
         <p className="text-gray-500 mb-4">Товары не найдены</p>
         <p className="text-sm text-gray-400">
           Попробуйте изменить параметры фильтрации

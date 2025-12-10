@@ -7,40 +7,98 @@ import { Badge } from "@/shared/ui/kit/badge";
 import { Button } from "@/shared/ui/kit/button";
 import { useProductFilters } from "../hooks/useProductFilters";
 
-const ActiveFilters = () => {
-  const { currentParams, updateUrlWithFilters } = useProductFilters();
+interface ActiveFiltersProps {
+  onFiltersChange?: () => void;
+}
 
-  if (typeof window === 'undefined') return null;
+const ActiveFilters: React.FC<ActiveFiltersProps> = ({ onFiltersChange }) => {
+  const { currentParams, removeFilter, resetFilters } = useProductFilters();
 
-  const activeFilters = [
-    { key: "category", label: "Категория", value: currentParams.category },
-    { key: "manufacturer", label: "Производитель", value: currentParams.manufacturer },
-    { key: "min_price", label: "Мин. цена", value: currentParams.min_price },
-    { key: "max_price", label: "Макс. цена", value: currentParams.max_price },
-    { key: "rating_from", label: "Рейтинг от", value: currentParams.rating_from },
-    { key: "rating_to", label: "Рейтинг до", value: currentParams.rating_to },
-    { key: "in_stock", label: "В наличии", value: currentParams.in_stock ? "Да" : undefined },
-  ].filter(filter => filter.value !== undefined && filter.value !== "");
+  const activeFilters = [];
 
-  if (activeFilters.length === 0) return null;
+  if (currentParams.category) {
+    const categories = currentParams.category.split(',');
+    categories.forEach(cat => {
+      activeFilters.push({
+        key: "category",
+        value: cat,
+        label: `Категория: ${cat}`
+      });
+    });
+  }
+
+  if (currentParams.manufacturer) {
+    const manufacturers = currentParams.manufacturer.split(',');
+    manufacturers.forEach(man => {
+      activeFilters.push({
+        key: "manufacturer",
+        value: man,
+        label: `Производитель: ${man}`
+      });
+    });
+  }
+
+  if (currentParams.min_price !== undefined || currentParams.max_price !== undefined) {
+    const min = currentParams.min_price || "0";
+    const max = currentParams.max_price || "∞";
+    activeFilters.push({
+      key: "price",
+      value: `${min}-${max}`,
+      label: `Цена: ${min}₽ - ${max}₽`
+    });
+  }
+
+  if (currentParams.rating_from !== undefined || currentParams.rating_to !== undefined) {
+    const from = currentParams.rating_from || 0;
+    const to = currentParams.rating_to || 5;
+    activeFilters.push({
+      key: "rating",
+      value: `${from}-${to}`,
+      label: `Рейтинг: ${from} - ${to}`
+    });
+  }
+
+  if (currentParams.in_stock) {
+    activeFilters.push({
+      key: "in_stock",
+      value: "true",
+      label: "Только в наличии"
+    });
+  }
+
+  if (activeFilters.length === 0) {
+    return null;
+  }
+
+  const handleRemoveFilter = (filterKey: string, filterValue?: string) => {
+    removeFilter(filterKey, filterValue);
+    if (onFiltersChange) {
+      onFiltersChange();
+    }
+  };
+
+  const handleResetAll = () => {
+    resetFilters();
+    if (onFiltersChange) {
+      onFiltersChange();
+    }
+  };
 
   return (
     <div className="flex flex-wrap items-center gap-2 mb-4 p-3 bg-gray-50 rounded-md">
       <span className="text-sm font-medium">Активные фильтры:</span>
-      {activeFilters.map((filter) => (
+      {activeFilters.map((filter, index) => (
         <Badge
-          key={filter.key}
+          key={`${filter.key}-${filter.value}-${index}`}
           variant="secondary"
           className="px-3 py-1 text-sm flex items-center gap-1"
         >
-          <span className="font-medium">
-            {filter.label}: {filter.value}
-          </span>
+          <span>{filter.label}</span>
           <Button
             variant="ghost"
             size="icon"
             className="h-4 w-4 hover:bg-transparent"
-            onClick={() => updateUrlWithFilters({ [filter.key]: undefined })}
+            onClick={() => handleRemoveFilter(filter.key, filter.value)}
           >
             <X className="h-3 w-3" />
           </Button>
@@ -51,19 +109,9 @@ const ActiveFilters = () => {
         variant="ghost"
         size="sm"
         className="text-blue-600 hover:text-blue-700"
-        onClick={() => {
-          updateUrlWithFilters({
-            category: undefined,
-            manufacturer: undefined,
-            min_price: undefined,
-            max_price: undefined,
-            rating_from: undefined,
-            rating_to: undefined,
-            in_stock: undefined,
-          });
-        }}
+        onClick={handleResetAll}
       >
-        Очистить фильтры
+        Очистить все
       </Button>
     </div>
   );

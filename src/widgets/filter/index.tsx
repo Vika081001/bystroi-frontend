@@ -1,7 +1,8 @@
+// widget/filter.tsx
 "use client";
 
 import { Star } from "lucide-react";
-import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 
 import { useProductFilters } from "@/feature/products-filter/hooks/useProductFilters";
 
@@ -21,6 +22,7 @@ interface FilterProps {
   initialMaxPrice?: number;
   categories?: string[];
   manufacturers?: string[];
+  onFiltersApplied?: (filters: any) => void;
 }
 
 export const Filter = ({ 
@@ -28,7 +30,8 @@ export const Filter = ({
   initialMinPrice = 0,
   initialMaxPrice = 10000,
   categories = [],
-  manufacturers = []
+  manufacturers = [],
+  onFiltersApplied
 }: FilterProps) => {
   const { currentParams, updateUrlWithFilters, resetFilters } = useProductFilters();
   
@@ -68,6 +71,28 @@ export const Filter = ({
     };
   }, [products, initialMinPrice, initialMaxPrice]);
 
+  const uniqueCategories = useMemo(() => {
+    if (categories && categories.length > 0) {
+      return categories;
+    }
+    
+    const cats = products
+      .filter(p => p.category_name)
+      .map(p => p.category_name);
+    return Array.from(new Set(cats));
+  }, [products, categories]);
+
+  const uniqueManufacturers = useMemo(() => {
+    if (manufacturers && manufacturers.length > 0) {
+      return manufacturers;
+    }
+    
+    const mans = products
+      .filter(p => p.manufacturer_name)
+      .map(p => p.manufacturer_name);
+    return Array.from(new Set(mans));
+  }, [products, manufacturers]);
+
   useEffect(() => {
     if (!priceInitialized && products.length > 0 && maxProductPrice > initialMinPrice) {
       if (currentParams.min_price !== undefined || currentParams.max_price !== undefined) {
@@ -83,23 +108,8 @@ export const Filter = ({
     }
   }, [products, minProductPrice, maxProductPrice, currentParams, priceInitialized, initialMinPrice]);
 
-
-  const uniqueCategories = useMemo(() => {
-    const cats = products
-      .filter(p => p.category_name)
-      .map(p => p.category_name);
-    return Array.from(new Set(cats));
-  }, [products]);
-
-  const uniqueManufacturers = useMemo(() => {
-    const mans = products
-      .filter(p => p.manufacturer_name)
-      .map(p => p.manufacturer_name);
-    return Array.from(new Set(mans));
-  }, [products]);
-
   const applyFilters = () => {
-    updateUrlWithFilters({
+    const filters = {
       min_price: priceRange[0],
       max_price: priceRange[1],
       rating_from: ratingRange[0],
@@ -107,7 +117,13 @@ export const Filter = ({
       category: selectedCategories.length > 0 ? selectedCategories.join(',') : undefined,
       manufacturer: selectedManufacturers.length > 0 ? selectedManufacturers.join(',') : undefined,
       in_stock: inStock ? true : undefined
-    });
+    };
+
+    updateUrlWithFilters(filters);
+
+    if (onFiltersApplied) {
+      onFiltersApplied(filters);
+    }
   };
 
   const handleCategoryChange = (category: string, checked: boolean) => {
@@ -118,7 +134,6 @@ export const Filter = ({
     );
   };
 
-  
   const handleManufacturerChange = (manufacturer: string, checked: boolean) => {
     setSelectedManufacturers(prev => 
       checked 
@@ -127,20 +142,29 @@ export const Filter = ({
     );
   };
 
-  
   const handlePriceChange = (value: number[]) => {
     const [min, max] = value;
-    
     if (min >= max) return;
     setPriceRange([min, max]);
   };
 
-  
   const handleRatingChange = (value: number[]) => {
     const [min, max] = value;
-    
     if (min >= max) return;
     setRatingRange([min, max]);
+  };
+
+  const handleResetFilters = () => {
+    resetFilters();
+    setSelectedCategories([]);
+    setSelectedManufacturers([]);
+    setInStock(false);
+    setPriceRange([minProductPrice, maxProductPrice]);
+    setRatingRange([0, 5]);
+    
+    if (onFiltersApplied) {
+      onFiltersApplied({});
+    }
   };
 
   return (
@@ -150,7 +174,7 @@ export const Filter = ({
         <Button
           variant="ghost"
           size="sm"
-          onClick={resetFilters}
+          onClick={handleResetFilters}
           className="text-blue-600 hover:text-blue-700"
         >
           Сбросить все
@@ -223,13 +247,16 @@ export const Filter = ({
               max={maxProductPrice}
               step={100}
             />
+            <div className="text-xs text-gray-500 mt-1">
+              Диапазон: {minProductPrice}₽ - {maxProductPrice}₽
+            </div>
           </div>
           <Separator />
 
           {uniqueCategories.length > 0 && (
             <>
               <div>
-                <p className="font-medium">Категории</p>
+                <p className="font-medium">Категории ({uniqueCategories.length})</p>
                 <div className="flex flex-col gap-2 pt-2 max-h-40 overflow-y-auto">
                   {uniqueCategories.map((category) => (
                     <label key={category} htmlFor={`category-${category}`} className="flex items-center gap-2">
@@ -250,7 +277,7 @@ export const Filter = ({
           {uniqueManufacturers.length > 0 && (
             <>
               <div>
-                <p className="font-medium">Производители</p>
+                <p className="font-medium">Производители ({uniqueManufacturers.length})</p>
                 <div className="flex flex-col gap-2 pt-2 max-h-40 overflow-y-auto">
                   {uniqueManufacturers.map((manufacturer) => (
                     <label key={manufacturer} htmlFor={`manufacturer-${manufacturer}`} className="flex items-center gap-2">
@@ -285,7 +312,7 @@ export const Filter = ({
       </div>
       <div className="p-4 w-full">
         <Button 
-          className="w-full bg-blue-600"
+          className="w-full bg-blue-600 hover:bg-blue-700"
           onClick={applyFilters}
         >
           Применить фильтры

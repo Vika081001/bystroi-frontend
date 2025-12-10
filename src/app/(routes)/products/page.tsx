@@ -3,7 +3,7 @@
 
 import { Suspense } from "react";
 import { SlidersHorizontal } from "lucide-react";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 import { Filter } from "@/widgets/filter";
@@ -49,11 +49,31 @@ const sortOptions: SortOption[] = [
 function ProductsContent() {
   const { currentSortType, applySort, currentParams } = useProductFilters();
   const [totalCount, setTotalCount] = useState<number | null>(null);
-  
-  const { data: filterData } = useQuery({
-    queryKey: ["productsForFilter"],
-    queryFn: () => fetchProducts({ page: 1, size: 100 }),
+  const [appliedFilters, setAppliedFilters] = useState<Partial<GetProductsDto>>({});
+
+  const handleFiltersApplied = useCallback((newFilters: Partial<GetProductsDto>) => {
+    setAppliedFilters(newFilters);
+  }, []);
+
+  const { data: filteredProductsData } = useQuery({
+    queryKey: ["filteredProducts", appliedFilters],
+    queryFn: () => fetchProducts({
+      ...appliedFilters,
+      page: 1,
+      size: 100,
+      sort_by: currentParams.sort_by,
+      sort_order: currentParams.sort_order,
+    }),
+    enabled: Object.keys(appliedFilters).length > 0,
   });
+
+  const { data: initialProductsData } = useQuery({
+    queryKey: ["initialProducts"],
+    queryFn: () => fetchProducts({ page: 1, size: 100 }),
+    enabled: Object.keys(appliedFilters).length === 0,
+  });
+
+  const filterProducts = filteredProductsData?.result || initialProductsData?.result || [];
 
   const selectedSort = sortOptions.find(opt => opt.value === currentSortType) || sortOptions[0];
 
@@ -67,10 +87,11 @@ function ProductsContent() {
     rating_from: currentParams.rating_from,
     rating_to: currentParams.rating_to,
     in_stock: currentParams.in_stock,
+    ...appliedFilters,
   };
 
   const { minPrice, maxPrice, categories, manufacturers } = useMemo(() => {
-    const products = filterData?.result || [];
+    const products = filterProducts;
     
     const productsWithPrice = products.filter((p: Product) => p.price != null);
     
@@ -106,7 +127,7 @@ function ProductsContent() {
       categories: uniqueCategories as string[],
       manufacturers: uniqueManufacturers as string[],
     };
-  }, [filterData]);
+  }, [filterProducts]);
 
   return (
     <div className="py-2 pb-12">
@@ -147,25 +168,27 @@ function ProductsContent() {
               <DialogContent className="p-0">
                 <DialogTitle></DialogTitle>
                 <Filter 
-                  products={filterData?.result || []}
+                  products={filterProducts}
                   initialMinPrice={minPrice}
                   initialMaxPrice={maxPrice}
                   categories={categories}
                   manufacturers={manufacturers}
+                  onFiltersApplied={handleFiltersApplied}
                 />
               </DialogContent>
             </Dialog>
           </div>
         </div>
-        <ActiveFilters />
+        <ActiveFilters onFiltersChange={() => setAppliedFilters({})} />
         <div className="flex pt-4 relative">
           <div className="hidden md:block w-80">
             <Filter 
-              products={filterData?.result || []}
+              products={filterProducts}
               initialMinPrice={minPrice}
               initialMaxPrice={maxPrice}
               categories={categories}
               manufacturers={manufacturers}
+              onFiltersApplied={handleFiltersApplied}
             />
           </div>
           <ProductsList 

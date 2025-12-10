@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useMemo, useState, useEffect } from "react";
+import { useCallback, useMemo } from "react";
 
 import { GetProductsDto, SortBy, SortOrder, SortType } from "@/entities/product";
 
@@ -9,14 +9,12 @@ export const useProductFilters = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  
   const currentParams = useMemo(() => {
     const params: Partial<GetProductsDto> = {};
     
     if (typeof window === 'undefined') return params;
     
     try {
-      
       if (searchParams.has("sort")) {
         const sortValue = searchParams.get("sort");
         switch (sortValue) {
@@ -42,7 +40,6 @@ export const useProductFilters = () => {
             break;
         }
       }
-      
       
       if (searchParams.has("category")) {
         params.category = searchParams.get("category")!;
@@ -72,7 +69,6 @@ export const useProductFilters = () => {
     return params;
   }, [searchParams]);
 
-  
   const updateUrlWithFilters = useCallback((newFilters: Record<string, string | number | boolean | undefined>) => {
     if (typeof window === 'undefined') return;
     
@@ -87,7 +83,6 @@ export const useProductFilters = () => {
         }
       });
       
-      
       const currentSort = searchParams.get("sort") || "popular";
       newParams.set("sort", currentSort);
       
@@ -97,11 +92,8 @@ export const useProductFilters = () => {
     }
   }, [router, searchParams]);
 
-  
   const resetFilters = useCallback(() => {
-    const paramsToClear = ["category", "manufacturer", "min_price", "max_price", "rating_from", "rating_to", "in_stock"];
     const newParams = new URLSearchParams();
-    
     
     const currentSort = searchParams.get("sort");
     if (currentSort) {
@@ -111,10 +103,37 @@ export const useProductFilters = () => {
     router.push(`/products?${newParams.toString()}`, { scroll: false });
   }, [router, searchParams]);
 
-  
   const applySort = useCallback((sortType: SortType) => {
     const newParams = new URLSearchParams(searchParams.toString());
     newParams.set("sort", sortType);
+    router.push(`/products?${newParams.toString()}`, { scroll: false });
+  }, [router, searchParams]);
+
+  const removeFilter = useCallback((key: string, value?: string) => {
+    const newParams = new URLSearchParams(searchParams.toString());
+    
+    if (key === "category" || key === "manufacturer") {
+      if (value) {
+        const currentValues = newParams.get(key)?.split(',') || [];
+        const newValues = currentValues.filter(v => v !== value);
+        if (newValues.length > 0) {
+          newParams.set(key, newValues.join(','));
+        } else {
+          newParams.delete(key);
+        }
+      } else {
+        newParams.delete(key);
+      }
+    } else if (key === "price") {
+      newParams.delete("min_price");
+      newParams.delete("max_price");
+    } else if (key === "rating") {
+      newParams.delete("rating_from");
+      newParams.delete("rating_to");
+    } else {
+      newParams.delete(key);
+    }
+    
     router.push(`/products?${newParams.toString()}`, { scroll: false });
   }, [router, searchParams]);
 
@@ -129,5 +148,6 @@ export const useProductFilters = () => {
     applySort,
     updateUrlWithFilters,
     resetFilters,
+    removeFilter,
   };
 };

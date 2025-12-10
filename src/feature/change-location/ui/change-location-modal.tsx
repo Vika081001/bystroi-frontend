@@ -267,7 +267,6 @@ export const ChangeLocationModal = () => {
   const [selected, setSelected] = useState<City | null>(null);
   const [open, setOpen] = useState(false);
 
-  // Используем useMemo для вычисления warehouses на основе выбранного города
   const warehouses = useMemo(() => {
     if (!selected) {
       return [];
