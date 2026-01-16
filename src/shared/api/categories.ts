@@ -10,16 +10,21 @@ import {
 
 export const fetchCategories = async (
   limit: number = 100,
-  offset: number = 0
+  offset: number = 0,
+  only_with_products: boolean = false
 ): Promise<CategoriesResponse> => {
   const response = await apiClient.get<CategoriesResponse>("/categories/", {
-    params: { limit, offset },
+    params: { limit, offset, only_with_products },
   });
   return response.data;
 };
 
-export const fetchCategoryTree = async (): Promise<CategoryTreeResponse> => {
-  const response = await apiClient.get<CategoryTreeResponse>("/categories/tree/");
+export const fetchCategoryTree = async (
+  only_with_products: boolean = false
+): Promise<CategoryTreeResponse> => {
+  const response = await apiClient.get<CategoryTreeResponse>("/categories/tree/", {
+    params: { only_with_products },
+  });
   return response.data;
 };
 
