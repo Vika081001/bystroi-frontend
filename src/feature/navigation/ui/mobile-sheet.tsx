@@ -23,7 +23,8 @@ import { useCart } from "@/entities/cart/model/hooks";
 export const MobileSheet = () => {
   const pathname = usePathname();
   // Показываем только категории с актуальными товарами
-  const { data: categoryTreeData, isLoading } = useCategoryTree(true);
+  // TODO: Вернуть true после обновления production API
+  const { data: categoryTreeData, isLoading } = useCategoryTree(false);
   const { data: cartData } = useCart();
   const cartItemsCount = cartData?.goods?.length || 0;
 

@@ -13,7 +13,8 @@ import { BreadcrumbsDemo } from "@/shared/ui/breadcrumbs";
 
 const CategoriesPage = () => {
   // Показываем только категории с актуальными товарами
-  const { data: categoryTreeData, isLoading } = useCategoryTree(true);
+  // TODO: Вернуть true после обновления production API
+  const { data: categoryTreeData, isLoading } = useCategoryTree(false);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [isMobile, setIsMobile] = useState(false);
 

@@ -12,7 +12,8 @@ import { transformImageUrl } from "@/shared/lib/image-utils";
 
 const Categories = () => {
   // Показываем только категории с актуальными товарами
-  const { data: categoriesData, isLoading } = useCategoryTree(true);
+  // TODO: Вернуть true после обновления production API
+  const { data: categoriesData, isLoading } = useCategoryTree(false);
 
   const softGradients = [
     "linear-gradient(135deg, #f9d8d6 0%, #f8e1e7 100%)",
