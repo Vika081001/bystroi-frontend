@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "app.tablecrm.com",
+        hostname: "dev.tablecrm.com",
         port: "",
         pathname: "/photos/**",
         search: "",
