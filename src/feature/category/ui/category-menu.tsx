@@ -15,8 +15,7 @@ import { transformImageUrl } from "@/shared/lib/image-utils";
 
 export const CategoryMenu = () => {
   // Показываем только категории с актуальными товарами
-  // TODO: Вернуть true после обновления production API
-  const { data: categoryTreeData, isLoading, error } = useCategoryTree(false);
+  const { data: categoryTreeData, isLoading, error } = useCategoryTree(true);
 
   const mainCategories = categoryTreeData?.result?.filter(
     category => category.is_active && !category.parent_id
